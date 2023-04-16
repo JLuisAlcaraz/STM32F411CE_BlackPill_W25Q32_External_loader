@@ -23,7 +23,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "w25q32.h"
+#include "Loader_Src.h"
 
 /* USER CODE END Includes */
 
@@ -65,8 +65,8 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	uint8_t rxBuf[0x101] = { 0 };
-	uint8_t txBuf[0x101] = { 0 };
+	uint8_t rxBuf[0x1001] = { 0 };
+	uint8_t txBuf[0x1001] = { 0 };
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -90,22 +90,20 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
 	HAL_SPI_Init(&hspi1);
-	FlashJedecID(rxBuf);
-
-	Read(0x100000, 100, rxBuf);
-	if(MassErase())
+	Read(0x00000000, 0x1000, rxBuf);
+	SectorErase(0x00000000, 0x00000600);
+	for(uint16_t x = 0x0000; x < 0x1000; x++)
 	{
-		while(1)
-			;
+		rxBuf[x] = 33;
 	}
-	Read(0x100000, 100, rxBuf);
+	Read(0x00000000, 0x1000, rxBuf);
 
-	for(uint8_t x = 0; x < 100; x++)
+	for(uint16_t x = 0x0000; x < 0x1000; x++)
 	{
 		txBuf[x] = x + 100;
 	}
-	Write(0x100000, 100, txBuf);
-	Read(0x100000, 100, rxBuf);
+	Write(0x00000000, 0x1000, txBuf);
+	Read(0x00000000, 0x1000, rxBuf);
 
   /* USER CODE END 2 */
 
@@ -141,7 +139,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 12;
+  RCC_OscInitStruct.PLL.PLLM = 15;
   RCC_OscInitStruct.PLL.PLLN = 96;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 4;
@@ -159,7 +157,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK)
   {
     Error_Handler();
   }

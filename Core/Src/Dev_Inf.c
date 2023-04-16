@@ -18,18 +18,14 @@ __root struct StorageInfo const StorageInfo  =  {
 #else
 struct StorageInfo __attribute__((section(".Dev_info"))) /*const*/ StorageInfo  = {
 #endif
-		"W25Q32_STM32F411CE_BlackPill", 	 	         // Device Name + version number
-		SPI_FLASH,                  		 // Device Type
-		0x00000000,                			 // Device Start Address
-		4194304,		                 	 // Device Size in Bytes
-		256				,                    // Programming Page Size
-		0xFF,                                // Initial Content of Erased Memory
+	"W25Q32_STM32F411CE_BlackPill", 	 	         // Device Name + version number
+	SPI_FLASH,                  		 // Device Type
+	0x00000000,                			 // Device Start Address
+	0x00400000,		                 	 // Device Size in Bytes
+	0x100,				                 // Programming Page Size
+	0xFF,                                // Initial Content of Erased Memory
 
-		// Specify Size and Address of Sectors (view example below)
-		{
-				{ 0x400,  			// Sector Numbers,
-				  0x1000 },        	//Sector Size
-
-				{ 0x00000000, 0x00000000 }
-		}
+	// Specify Size and Address of Sectors (view example below)
+	{{0x00000400, 0x00001000}, 			// Sector Numbers, Sector Size
+	{0x00000000, 0x00000000}}
 };
